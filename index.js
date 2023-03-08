@@ -2,13 +2,12 @@
 import express from 'express'
 import logger from './loggerMiddleware.js'
 import cors from 'cors'
+import { PORT } from './config.js'
 
 const app = express()
 
 app.use(cors())
-
 app.use(express.json())
-
 app.use(logger)
 
 let notes = [
@@ -86,7 +85,6 @@ app.use((request, response) => {
   })
 })
 
-const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
