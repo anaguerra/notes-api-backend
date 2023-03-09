@@ -1,7 +1,9 @@
 import mongoose from 'mongoose'
-// import Note from './models/Note.js'
+import dotenv from 'dotenv'
 
-const connectionString = 'mongodb+srv://root:root@cluster0.odhydrp.mongodb.net/testdb?retryWrites=true&w=majority'
+dotenv.config()
+
+const connectionString = process.env.MONGO_DB_URI
 
 mongoose.connect(connectionString)
   .then(() => {
