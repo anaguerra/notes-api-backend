@@ -83,7 +83,11 @@ app.post('/api/notes', (request, response) => {
   })
 })
 
-/** Middleware */
+/** Middlewares */
+app.use((request, response, next) => {
+  response.status(404).end()
+})
+
 app.use((error, request, response, next) => {
   console.error(error)
 
