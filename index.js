@@ -1,8 +1,9 @@
 
 import express from 'express'
-import logger from './loggerMiddleware.js'
+import logger from './middleware/loggerMiddleware.js'
+import notFound from './middleware/notFoundMiddleware.js'
+import errorResponse from './middleware/handleErrorsMiddleware.js'
 import cors from 'cors'
-import { PORT } from './config.js'
 import Note from './models/Note.js'
 import './mongo.js'
 import dotenv from 'dotenv'
@@ -56,7 +57,7 @@ app.put('/api/notes/:id', (request, response, next) => {
 app.delete('/api/notes/:id', (request, response, next) => {
   const { id } = request.params
 
-  Note.findByIdAndRemove(id).then(result => {
+  Note.findByIdAndDelete(id).then(() => {
     response.status(204).end()
   }).catch(error => {
     next(error)
@@ -84,20 +85,9 @@ app.post('/api/notes', (request, response) => {
 })
 
 /** Middlewares */
-app.use((request, response, next) => {
-  response.status(404).end()
-})
-
-app.use((error, request, response, next) => {
-  console.error(error)
-
-  if (error.name === 'CastError') {
-    response.status(400).send({ error: 'invalid id type' })
-  } else {
-    response.status(500).end()
-  }
-})
+app.use(notFound)
+app.use(errorResponse)
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${process.env.PORT}`)
 })
