@@ -15,6 +15,8 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(logger)
+// servir estáticos
+// app.use('/images', express.static('images'))
 
 app.get('/', (req, res) => {
   res.send(process.env.MONGO_DB_U)
