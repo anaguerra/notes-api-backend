@@ -13,21 +13,6 @@ mongoose.connect(connectionString)
     console.error(error)
   })
 
-// Note.find({}).then(result => {
-//   console.log(result)
-//   mongoose.connection.close()
-// })
-
-// const note = new Note({
-//   content: 'MongoDB es increíble, midu',
-//   date: new Date(),
-//   important: true
-// })
-
-// note.save()
-//   .then((result) => {
-//     console.log(result)
-//     mongoose.connection.close()
-//   }).catch(error => {
-//     console.error(error)
-//   })
+process.on('uncaughtException', () => {
+  mongoose.connection.destroy()
+})

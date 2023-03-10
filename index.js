@@ -29,15 +29,13 @@ app.get('/api/notes', (request, response) => {
 app.get('/api/notes/:id', (request, response, next) => {
   const { id } = request.params
 
-  Note.findById(id).then(foundedNote => {
-    if (foundedNote) {
-      response.json(foundedNote)
-    } else {
-      response.status(404).end()
-    }
-  }).catch(error => {
-    next(error)
-  })
+  Note.findById(id)
+    .then(foundedNote => {
+      return foundedNote
+        ? response.json(foundedNote)
+        : response.status(404).end()
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -52,6 +50,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     .then(result => {
       response.status(200).json(result)
     })
+    .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response, next) => {
@@ -59,12 +58,10 @@ app.delete('/api/notes/:id', (request, response, next) => {
 
   Note.findByIdAndDelete(id).then(() => {
     response.status(204).end()
-  }).catch(error => {
-    next(error)
-  })
+  }).catch(error => next(error))
 })
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   const note = request.body
 
   if (!note || !note.content) {
@@ -81,7 +78,7 @@ app.post('/api/notes', (request, response) => {
 
   newNote.save().then(savedNote => {
     response.status(201).json(savedNote)
-  })
+  }).catch(error => next(error))
 })
 
 /** Middlewares */
