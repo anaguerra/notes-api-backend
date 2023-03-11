@@ -7,10 +7,8 @@ import cors from 'cors'
 import Note from './models/Note.js'
 import './mongo.js'
 import dotenv from 'dotenv'
-import palindrome from './palindrome.js'
 
 dotenv.config()
-console.log(palindrome('midudev'))
 
 const app = express()
 
@@ -89,6 +87,8 @@ app.post('/api/notes', (request, response, next) => {
 app.use(notFound)
 app.use(errorResponse)
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`)
 })
+
+export { app, server }
