@@ -7,8 +7,10 @@ import cors from 'cors'
 import Note from './models/Note.js'
 import './mongo.js'
 import dotenv from 'dotenv'
+import palindrome from './palindrome.js'
 
 dotenv.config()
+console.log(palindrome('midudev'))
 
 const app = express()
 
