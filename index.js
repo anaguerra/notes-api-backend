@@ -23,9 +23,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/notes', async (request, response) => {
-  // Note.find({}).then(notes => {
-  //   response.json(notes)
-  // })
   const notes = await Note.find({})
   response.json(notes)
 })

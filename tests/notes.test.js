@@ -72,8 +72,16 @@ test('a note can be deleted', async () => {
   const { contents, response: secondResponse } = await getAllContentFromNotes()
 
   expect(secondResponse.body).toHaveLength(initialNotes.length - 1)
-
   expect(contents).not.toContain(noteToDelete.content)
+})
+
+test('a note that do not exist can not be deleted', async () => {
+  await api.delete('/api/notes/12345')
+    .expect(400)
+
+  const { response } = await getAllContentFromNotes()
+
+  expect(response.body).toHaveLength(initialNotes.length)
 })
 
 afterAll(() => {
