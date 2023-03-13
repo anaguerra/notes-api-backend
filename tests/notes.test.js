@@ -61,6 +61,21 @@ test('note wihtout content can not be added', async () => {
   expect(response.body).toHaveLength(initialNotes.length)
 })
 
+test('a note can be deleted', async () => {
+  const { response: firstResponse } = await getAllContentFromNotes()
+  const { body: notes } = firstResponse
+  const noteToDelete = notes[0]
+
+  await api.delete(`/api/notes/${noteToDelete.id}`)
+    .expect(204)
+
+  const { contents, response: secondResponse } = await getAllContentFromNotes()
+
+  expect(secondResponse.body).toHaveLength(initialNotes.length - 1)
+
+  expect(contents).not.toContain(noteToDelete.content)
+})
+
 afterAll(() => {
   mongoose.connection.close()
   server.close()

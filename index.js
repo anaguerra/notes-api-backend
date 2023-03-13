@@ -22,10 +22,12 @@ app.get('/', (req, res) => {
   res.send(process.env.MONGO_DB_U)
 })
 
-app.get('/api/notes', (request, response) => {
-  Note.find({}).then(notes => {
-    response.json(notes)
-  })
+app.get('/api/notes', async (request, response) => {
+  // Note.find({}).then(notes => {
+  //   response.json(notes)
+  // })
+  const notes = await Note.find({})
+  response.json(notes)
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
@@ -63,7 +65,7 @@ app.delete('/api/notes/:id', (request, response, next) => {
   }).catch(error => next(error))
 })
 
-app.post('/api/notes', (request, response, next) => {
+app.post('/api/notes', async (request, response, next) => {
   const note = request.body
 
   if (!note || !note.content) {
@@ -77,10 +79,12 @@ app.post('/api/notes', (request, response, next) => {
     date: new Date().toISOString(),
     important: note.important || false
   })
-
-  newNote.save().then(savedNote => {
+  try {
+    const savedNote = await newNote.save()
     response.status(201).json(savedNote)
-  }).catch(error => next(error))
+  } catch (error) {
+    next(error)
+  }
 })
 
 /** Middlewares */
