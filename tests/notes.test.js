@@ -1,22 +1,7 @@
 import mongoose from 'mongoose'
-import request from 'supertest'
-import { app, server } from '../index.js'
+import { server } from '../index.js'
 import Note from '../models/Note.js'
-
-const api = request(app)
-
-const initialNotes = [
-  {
-    content: 'Aprendiendo fullstack con midudev',
-    date: new Date(),
-    important: true
-  },
-  {
-    content: 'Nueva',
-    date: new Date(),
-    important: false
-  }
-]
+import { initialNotes, api, getAllContentFromNotes } from './helpers.js'
 
 beforeEach(async () => {
   await Note.deleteMany({})
@@ -36,19 +21,44 @@ test('notes are returned as json', async () => {
 })
 
 test('there are 2 notes', async () => {
-  const response = await api.get('/api/notes')
+  const { response } = await getAllContentFromNotes()
   expect(response.body).toHaveLength(initialNotes.length)
 })
 
 test('the first note is about midudev', async () => {
-  const response = await api.get('/api/notes')
-  expect(response.body[0].content).toBe('Aprendiendo fullstack con midudev')
+  const { contents } = await getAllContentFromNotes()
+  expect(contents).toContain('Aprendiendo fullstack con midudev')
 })
 
-test('the first note is about midudev new', async () => {
-  const response = await api.get('/api/notes')
-  const contents = response.body.map(note => note.content)
-  expect(contents).toContain('Aprendiendo fullstack con midudev')
+test('a valid note can be added', async () => {
+  const newNote = {
+    content: 'Proximamente async/await',
+    important: true
+  }
+
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const { contents, response } = await getAllContentFromNotes()
+  expect(contents).toContain(newNote.content)
+  expect(response.body).toHaveLength(initialNotes.length + 1)
+})
+
+test('note wihtout content can not be added', async () => {
+  const newNote = {
+    important: true
+  }
+
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .expect(400)
+
+  const { response } = await getAllContentFromNotes()
+  expect(response.body).toHaveLength(initialNotes.length)
 })
 
 afterAll(() => {
