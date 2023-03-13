@@ -3,7 +3,11 @@ import mongoose, { Schema } from 'mongoose'
 const noteSchema = new Schema({
   content: String,
   date: Date,
-  important: Boolean
+  important: Boolean,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 const Note = mongoose.model('Note', noteSchema)

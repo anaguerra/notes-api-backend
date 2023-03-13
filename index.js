@@ -7,6 +7,7 @@ import cors from 'cors'
 import Note from './models/Note.js'
 import './mongo.js'
 import dotenv from 'dotenv'
+import usersRouter from './controllers/users.js'
 
 dotenv.config()
 
@@ -88,6 +89,7 @@ app.post('/api/notes', async (request, response, next) => {
 })
 
 /** Middlewares */
+app.use('/api/users', usersRouter)
 app.use(notFound)
 app.use(errorResponse)
 
