@@ -13,6 +13,11 @@ const initialNotes = [
     content: 'Nueva',
     date: new Date(),
     important: false
+  },
+  {
+    content: 'Gracias al chat',
+    date: new Date(),
+    important: false
   }
 ]
 
