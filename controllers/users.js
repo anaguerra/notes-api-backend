@@ -1,4 +1,3 @@
-
 import express from 'express'
 import User from '../models/User.js'
 
@@ -14,7 +13,6 @@ usersRouter.post('/', async (request, response) => {
     passwordHash: password
   })
 
-  console.log(user)
   const savedUser = await user.save()
 
   response.json(savedUser)
