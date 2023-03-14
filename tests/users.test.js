@@ -17,7 +17,7 @@ describe('POST new user', () => {
   test('create new user', async () => {
     const usersAtStart = await getUsers()
     const newUser = {
-      username: 'anaguerra',
+      username: 'agueve',
       name: 'Ana',
       password: '12345'
     }
@@ -35,6 +35,26 @@ describe('POST new user', () => {
 
     const usernames = usersAtEnd.map(user => user.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  test('create new user fails if username is already taken', async () => {
+    const usersAtStart = await getUsers()
+    const newUser = {
+      username: 'anaroot',
+      name: 'Ana',
+      password: '12345'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    expect(result.text).toMatch(/E11000 duplicate key error collection/)
+    expect(result.text).toMatch(/index: username/)
+
+    const usersAtEnd = await getUsers()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 })
 
