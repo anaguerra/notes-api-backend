@@ -4,6 +4,11 @@ import bcrypt from 'bcrypt'
 
 const usersRouter = express.Router()
 
+usersRouter.get('/', async (request, response) => {
+  const users = await User.find({})
+  response.json(users)
+})
+
 usersRouter.post('/', async (request, response) => {
   const { body } = request
   const { username, name, password } = body

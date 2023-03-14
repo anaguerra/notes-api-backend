@@ -58,6 +58,23 @@ describe('POST new user', () => {
   })
 })
 
+describe('GET all users', () => {
+  test('users are returned as json', async () => {
+    await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('there are 1 user', async () => {
+    const usersAtStart = await getUsers()
+    const response = await api
+      .get('/api/users')
+
+    expect(response.body).toHaveLength(usersAtStart.length)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
   server.close()
