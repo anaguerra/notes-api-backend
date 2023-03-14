@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 import { server } from '../index.js'
 import User from '../models/User.js'
-import { api } from './helpers.js'
+import { api, getUsers } from './helpers.js'
 import bcrypt from 'bcrypt'
 
 beforeEach(async () => {
@@ -15,8 +15,7 @@ beforeEach(async () => {
 
 describe('POST new user', () => {
   test('create new user', async () => {
-    const usersDB = await User.find({})
-    const usersAtStart = usersDB.map(user => user.toJSON())
+    const usersAtStart = await getUsers()
     const newUser = {
       username: 'anaguerra',
       name: 'Ana',

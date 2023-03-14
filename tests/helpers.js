@@ -1,5 +1,6 @@
 import supertest from 'supertest'
 import { app } from '../index.js'
+import User from '../models/User.js'
 
 const api = supertest(app)
 
@@ -23,11 +24,20 @@ const initialNotes = [
 
 const getAllContentFromNotes = async () => {
   const response = await api.get('/api/notes')
-  console.log({ response })
   return {
     contents: response.body.map(note => note.content),
     response
   }
 }
 
-export { initialNotes, api, getAllContentFromNotes }
+const getUsers = async () => {
+  const usersDB = await User.find({})
+  return usersDB.map(user => user.toJSON())
+}
+
+export {
+  api,
+  initialNotes,
+  getAllContentFromNotes,
+  getUsers
+}
