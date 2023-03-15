@@ -11,12 +11,7 @@ const initialNotes = [
     important: true
   },
   {
-    content: 'Nueva',
-    date: new Date(),
-    important: false
-  },
-  {
-    content: 'Gracias al chat',
+    content: 'Este curso mola',
     date: new Date(),
     important: false
   }

@@ -1,10 +1,20 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcrypt'
 import { server } from '../index.js'
 import Note from '../models/Note.js'
+import User from '../models/User.js'
 import { initialNotes, api, getAllContentFromNotes } from './helpers.js'
 
 beforeEach(async () => {
   await Note.deleteMany({})
+  await User.deleteMany({})
+
+  // save test user
+  const passwordHash = await bcrypt.hash('pwsd', 10)
+  const testUser = new User({ username: 'anaroot', passwordHash })
+  const savedUser = await testUser.save()
+
+  // const testUserAfterSave = await User.find({ username: 'testUser' })
 
   // save en paralelo, no sabemos cual se guarda primero
   // const notesObject = initialNotes.map(note => new Note(note))
@@ -13,7 +23,12 @@ beforeEach(async () => {
 
   // save en secuencial
   for (const note of initialNotes) {
-    const noteObject = new Note(note)
+    const noteObject = new Note({
+      content: note.content,
+      date: new Date().toISOString(),
+      important: true,
+      user: savedUser._id
+    })
     await noteObject.save()
   }
 })
@@ -39,9 +54,11 @@ describe('GET all notes', () => {
 
 describe('POST note', () => {
   test('a valid note can be added', async () => {
+    const savedUser = await User.findOne({ username: 'agueve' })
     const newNote = {
       content: 'Proximamente async/await',
-      important: true
+      important: true,
+      userId: savedUser._id
     }
 
     await api
