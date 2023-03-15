@@ -33,6 +33,9 @@ beforeEach(async () => {
   }
 })
 
+/**
+ * GET
+ */
 describe('GET all notes', () => {
   test('notes are returned as json', async () => {
     await api
@@ -52,6 +55,9 @@ describe('GET all notes', () => {
   })
 })
 
+/**
+ * POST
+ */
 describe('POST note', () => {
   test('a valid note can be added', async () => {
     const savedUser = await User.findOne({ username: 'agueve' })
@@ -87,6 +93,9 @@ describe('POST note', () => {
   })
 })
 
+/**
+ * DELETE
+ */
 describe('DELETE note', () => {
   test('a note can be deleted', async () => {
     const { response: firstResponse } = await getAllContentFromNotes()

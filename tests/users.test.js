@@ -13,6 +13,9 @@ beforeEach(async () => {
   await user.save()
 })
 
+/**
+ * POST
+ */
 describe('POST new user', () => {
   test('create new user', async () => {
     const usersAtStart = await getUsers()
@@ -58,6 +61,9 @@ describe('POST new user', () => {
   })
 })
 
+/**
+ * GET
+ */
 describe('GET all users', () => {
   test('users are returned as json', async () => {
     await api
