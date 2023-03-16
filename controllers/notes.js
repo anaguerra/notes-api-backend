@@ -1,4 +1,4 @@
-
+import mongoose from 'mongoose'
 import express from 'express'
 import Note from '../models/Note.js'
 import User from '../models/User.js'
@@ -12,6 +12,10 @@ notesRouter.get('/', async (request, response) => {
 
 notesRouter.get('/:id', (request, response, next) => {
   const { id } = request.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).send('invalid userId')
+  }
 
   Note.findById(id)
     .then(foundedNote => {
@@ -30,6 +34,10 @@ notesRouter.put('/:id', (request, response, next) => {
     important: note.important
   }
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).send('invalid userId')
+  }
+
   Note.findByIdAndUpdate(id, updatedNote, { new: true })
     .then(result => {
       response.status(200).json(result)
@@ -39,6 +47,10 @@ notesRouter.put('/:id', (request, response, next) => {
 
 notesRouter.delete('/:id', async (request, response, next) => {
   const { id } = request.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).send('invalid userId')
+  }
 
   try {
     await Note.findByIdAndDelete(id)
@@ -55,12 +67,16 @@ notesRouter.post('/', async (request, response, next) => {
     userId
   } = request.body
 
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return response.status(400).send('invalid userId')
+  }
   const user = await User.findById(userId)
 
   if (!content) {
-    return response.status(400).json({
-      error: 'note.content is missing'
-    })
+    return response.status(400).send('note content missing')
+  }
+  if (!user) {
+    return response.status(400).send('userId does not exist')
   }
 
   const newNote = new Note({

@@ -11,10 +11,8 @@ beforeEach(async () => {
 
   // save test user
   const passwordHash = await bcrypt.hash('pwsd', 10)
-  const testUser = new User({ username: 'anaroot', passwordHash })
-  const savedUser = await testUser.save()
-
-  // const testUserAfterSave = await User.find({ username: 'testUser' })
+  const rootUser = new User({ username: 'anaroot', passwordHash })
+  const savedUser = await rootUser.save()
 
   // save en paralelo, no sabemos cual se guarda primero
   // const notesObject = initialNotes.map(note => new Note(note))
@@ -60,7 +58,7 @@ describe('GET all notes', () => {
  */
 describe('POST note', () => {
   test('a valid note can be added', async () => {
-    const savedUser = await User.findOne({ username: 'agueve' })
+    const savedUser = await User.findOne({ username: 'anaroot' })
     const newNote = {
       content: 'Proximamente async/await',
       important: true,
@@ -78,15 +76,37 @@ describe('POST note', () => {
     expect(response.body).toHaveLength(initialNotes.length + 1)
   })
 
-  test('note wihtout content can not be added', async () => {
+  test('note without content can not be added', async () => {
+    const savedUser = await User.findOne({ username: 'anaroot' })
     const newNote = {
-      important: true
+      important: true,
+      userId: savedUser._id
     }
 
-    await api
+    const apiResponse = await api
       .post('/api/notes')
       .send(newNote)
       .expect(400)
+
+    expect(apiResponse.error.text).toBe('note content missing')
+
+    const { response } = await getAllContentFromNotes()
+    expect(response.body).toHaveLength(initialNotes.length)
+  })
+
+  test('note with unexisting userId can not be added', async () => {
+    const newNote = {
+      content: 'my content',
+      important: true,
+      userId: '11119625c89e2bbf8608e911'
+    }
+
+    const apiResponse = await api
+      .post('/api/notes')
+      .send(newNote)
+      .expect(400)
+
+    expect(apiResponse.error.text).toBe('userId does not exist')
 
     const { response } = await getAllContentFromNotes()
     expect(response.body).toHaveLength(initialNotes.length)
@@ -112,8 +132,10 @@ describe('DELETE note', () => {
   })
 
   test('a note that do not exist can not be deleted', async () => {
-    await api.delete('/api/notes/12345')
+    const apiResponse = await api.delete('/api/notes/12345')
       .expect(400)
+
+    expect(apiResponse.error.text).toBe('invalid userId')
 
     const { response } = await getAllContentFromNotes()
 
