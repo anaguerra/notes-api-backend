@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import { server } from '../index.js'
-import User from '../models/User.js'
-import { api, getUsers } from './helpers.js'
+import { server } from '../../index.js'
+import User from '../../models/User.js'
+import { api, getUsers } from '../helpers.js'
 import bcrypt from 'bcrypt'
 
 beforeEach(async () => {
@@ -13,9 +13,6 @@ beforeEach(async () => {
   await user.save()
 })
 
-/**
- * POST
- */
 describe('POST new user', () => {
   test('create new user', async () => {
     const usersAtStart = await getUsers()
@@ -58,26 +55,6 @@ describe('POST new user', () => {
 
     const usersAtEnd = await getUsers()
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
-  })
-})
-
-/**
- * GET
- */
-describe('GET all users', () => {
-  test('users are returned as json', async () => {
-    await api
-      .get('/api/users')
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-  })
-
-  test('there are 1 user', async () => {
-    const usersAtStart = await getUsers()
-    const response = await api
-      .get('/api/users')
-
-    expect(response.body).toHaveLength(usersAtStart.length)
   })
 })
 
