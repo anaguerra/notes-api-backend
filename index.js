@@ -8,6 +8,7 @@ import './mongo.js'
 import dotenv from 'dotenv'
 import notesRouter from './controllers/notes.js'
 import usersRouter from './controllers/users.js'
+import loginRouter from './controllers/login.js'
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 })
 
 /** Middlewares */
+app.use('/api/login', loginRouter)
 app.use('/api/notes', notesRouter)
 app.use('/api/users', usersRouter)
 app.use(notFound)

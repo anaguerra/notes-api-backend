@@ -1,11 +1,10 @@
-
 POST  http://localhost:3001/api/notes 
 Content-Type: application/json
 
 {
-    "content": "para probar notes",
+    "content": "First note root",
     "important": true,
-    "userId": "64108cb05f2198dfddd7a8a4"
+    "userId": "64132085a58e58e9b2bb216a"
 }
 
 
