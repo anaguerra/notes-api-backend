@@ -10,7 +10,7 @@ beforeEach(async () => {
   await User.deleteMany({})
 
   // save test user
-  const passwordHash = await bcrypt.hash('pwsd', 10)
+  const passwordHash = await bcrypt.hash('password', 10)
   const rootUser = new User({ username: 'anaroot', passwordHash })
   const savedUser = await rootUser.save()
 
@@ -29,6 +29,9 @@ beforeEach(async () => {
 describe('POST note', () => {
   test('a valid note can be added', async () => {
     const savedUser = await User.findOne({ username: 'anaroot' })
+    const loginResponse = await api.post('/api/login').send({ username: 'anaroot', password: 'password' })
+    const token = loginResponse.body.token
+
     const newNote = {
       content: 'Proximamente async/await',
       important: true,
@@ -37,6 +40,7 @@ describe('POST note', () => {
 
     await api
       .post('/api/notes')
+      .set('Authorization', `Bearer ${token}`)
       .send(newNote)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -48,6 +52,9 @@ describe('POST note', () => {
 
   test('note without content can not be added', async () => {
     const savedUser = await User.findOne({ username: 'anaroot' })
+    const loginResponse = await api.post('/api/login').send({ username: 'anaroot', password: 'password' })
+    const token = loginResponse.body.token
+
     const newNote = {
       important: true,
       userId: savedUser._id
@@ -55,28 +62,11 @@ describe('POST note', () => {
 
     const apiResponse = await api
       .post('/api/notes')
+      .set('Authorization', `Bearer ${token}`)
       .send(newNote)
       .expect(400)
 
     expect(apiResponse.error.text).toBe('note content missing')
-
-    const { response } = await getAllContentFromNotes()
-    expect(response.body).toHaveLength(initialNotes.length)
-  })
-
-  test('note with unexisting userId can not be added', async () => {
-    const newNote = {
-      content: 'my content',
-      important: true,
-      userId: '11119625c89e2bbf8608e911'
-    }
-
-    const apiResponse = await api
-      .post('/api/notes')
-      .send(newNote)
-      .expect(400)
-
-    expect(apiResponse.error.text).toBe('userId does not exist')
 
     const { response } = await getAllContentFromNotes()
     expect(response.body).toHaveLength(initialNotes.length)

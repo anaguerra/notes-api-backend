@@ -1,15 +1,13 @@
 POST  http://localhost:3001/api/notes 
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MTMyY2MzMzRiNDk1ODU2MzJiNTY2NiIsIm5hbWUiOiJBbmEiLCJ1c2VybmFtZSI6ImFuYXJvb3QiLCJpYXQiOjE2NzkwNDU3MjF9.PjgomJAG35lhNl0T-oyYJttqTCQF_QtQLnTkyN69sOE
 
 {
-    "content": "First note root",
-    "important": true,
-    "userId": "64132085a58e58e9b2bb216a"
+    "content": "test note3",
+    "important": true
 }
 
-
-###
-
+#####
 POST  http://localhost:3001/api/notes 
 Content-Type: application/json
 

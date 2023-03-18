@@ -26,7 +26,7 @@ loginRouter.post('/', async (request, response) => {
     name: user.name,
     username: user.username
   }
-  const token = jsonwebtoken.sign(userPayload, 'secret')
+  const token = jsonwebtoken.sign(userPayload, process.env.API_SECRET)
 
   response.send({
     name: user.name,
