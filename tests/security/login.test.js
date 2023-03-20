@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt'
 import User from '../../models/User.js'
 import { api } from '../helpers.js'
+import mongoose from 'mongoose'
+import { server } from '../../index.js'
 
 beforeEach(async () => {
   await User.deleteMany({})
@@ -35,4 +37,9 @@ describe('POST login', () => {
 
     expect(loginResponse.body.error).toBe('invalid user or password')
   })
+})
+
+afterAll(() => {
+  mongoose.connection.close()
+  server.close()
 })

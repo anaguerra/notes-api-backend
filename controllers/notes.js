@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import express from 'express'
 import Note from '../models/Note.js'
 import User from '../models/User.js'
-import jsonwebtoken from 'jsonwebtoken'
+import authentication from '../middleware/authenticationMiddleware.js'
 
 const notesRouter = express.Router()
 
@@ -64,36 +64,15 @@ notesRouter.delete('/:id', async (request, response, next) => {
   }
 })
 
-notesRouter.post('/', async (request, response, next) => {
-  const authorization = request.get('authorization')
-  let token = null
-  let decodedToken = null
-
-  if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-    token = authorization.substring(7)
-  }
-  if (!token) {
-    return response.status(401).json({ error: 'missing token' })
-  }
-
-  try {
-    decodedToken = jsonwebtoken.verify(token, process.env.API_SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: 'invalid token' })
-    }
-  } catch (error) {
-    return response.status(401).json({ error: 'invalid token' })
-  }
-
+notesRouter.post('/', authentication, async (request, response, next) => {
   const {
     content,
     important = false
   } = request.body
 
-  const { id: userId } = decodedToken
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return response.status(400).send('invalid userId')
-  }
+  // user id in request afteher authenticationMiddleware
+  const { userId } = request
+
   const user = await User.findById(userId)
 
   if (!content) {
