@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 import notesRouter from './controllers/notes.js'
 import usersRouter from './controllers/users.js'
 import loginRouter from './controllers/login.js'
+import testingRouter from './controllers/testing.js'
 
 dotenv.config()
 
@@ -28,6 +29,12 @@ app.get('/', (req, res) => {
 app.use('/api/login', loginRouter)
 app.use('/api/notes', notesRouter)
 app.use('/api/users', usersRouter)
+
+// TODO: import inline ??
+if (process.env.NODE_ENV === 'test') {
+  app.use('/api/testing', testingRouter)
+}
+
 app.use(notFound)
 app.use(errorResponse)
 
